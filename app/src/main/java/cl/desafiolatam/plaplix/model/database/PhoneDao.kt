@@ -16,10 +16,10 @@ interface PhoneDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhone(phoneList : List<PhoneEntity>)
 
-/*    @Query("SELECT * FROM phone_table WHERE id=:id")
-    fun getAllInfo(id:Int) : LiveData<List<PhoneDetailEntity>>
+    @Query("SELECT * FROM phone_table WHERE id=:id")
+    fun getAllInfo(id:String) : LiveData<PhoneDetailEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDetailPhone(phoneList : List<PhoneDetailEntity>)*/
+    suspend fun insertDetailPhone(phoneList : List<PhoneDetailEntity>)
 
 }

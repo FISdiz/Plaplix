@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cl.desafiolatam.plaplix.R
 import cl.desafiolatam.plaplix.model.pojo.Phone
+import cl.desafiolatam.plaplix.view.PhoneDetailFragment
 import cl.desafiolatam.plaplix.viewmodel.PhoneViewModel
 import kotlinx.android.synthetic.main.fragment_phone_list.*
 
@@ -51,13 +52,19 @@ class PhoneListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter =
-            PhoneAdapter(phoneSmallRecycler)
+        adapter = PhoneAdapter(phoneSmallRecycler)
         recycler_phone.adapter = adapter
 
         val model : PhoneViewModel by activityViewModels()
         model.phoneSmallList.observe(viewLifecycleOwner, Observer {
             adapter.updateItems(it)
+        })
+
+        adapter.phoneSelected.observe(viewLifecycleOwner, Observer {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_fragment, PhoneDetailFragment.newInstance("$it.id", ""), "detail")
+                .addToBackStack("detail")
+                .commit()
         })
     }
 }

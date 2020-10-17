@@ -3,6 +3,7 @@ package cl.desafiolatam.plaplixtest.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import cl.desafiolatam.plaplix.R
 import cl.desafiolatam.plaplix.model.pojo.Phone
@@ -20,11 +21,17 @@ class PhoneAdapter(private var phoneDataset : MutableList<Phone>) : RecyclerView
         return phoneDataset.size
     }
 
+    val phoneSelected = MutableLiveData<Phone>()
+
     override fun onBindViewHolder(holder: PhoneViewHolder, position: Int) {
         holder.phoneName.text = phoneDataset.get(position).name
         holder.phonePrice.text = phoneDataset.get(position).price.toString()
 
         Picasso.get().load(phoneDataset.get(position).image).into(holder.phoneImage)
+
+        holder.itemView.setOnClickListener{
+            phoneSelected.value = phoneDataset.get(position)
+        }
     }
 
     fun updateItems (it: List<Phone>) {

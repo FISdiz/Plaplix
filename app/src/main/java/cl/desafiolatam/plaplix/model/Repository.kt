@@ -2,9 +2,12 @@ package cl.desafiolatam.plaplix.model
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import cl.desafiolatam.plaplix.model.database.PhoneDatabase
+import cl.desafiolatam.plaplix.model.database.PhoneDetailEntity
 import cl.desafiolatam.plaplix.model.database.PhoneEntity
 import cl.desafiolatam.plaplix.model.pojo.Phone
+import cl.desafiolatam.plaplix.model.pojo.PhoneDetail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +39,6 @@ class Repository(context: Context) {
                     Log.d("REPO", "${call.request().url()}")
                 }
             }
-
         })
     }
 
@@ -55,5 +57,9 @@ class Repository(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             phoneDatabase.getPhoneDao().insertPhone(listPhoneEntity)
         }
+    }
+
+    fun getPhoneDetails(param1 : String) : LiveData<PhoneDetailEntity> {
+        return phoneDatabase.getPhoneDao().getAllInfo(param1)
     }
 }

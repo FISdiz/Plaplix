@@ -2,7 +2,9 @@ package cl.desafiolatam.plaplix.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import cl.desafiolatam.plaplix.model.Repository
+import cl.desafiolatam.plaplix.model.database.PhoneDetailEntity
 
 class PhoneViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -13,6 +15,10 @@ class PhoneViewModel(application: Application) : AndroidViewModel(application) {
     init {
         repository = Repository(application)
         repository.loadApiData()
+    }
+
+    fun getDetailFrom(param1: String) : LiveData<PhoneDetailEntity> {
+        return repository.getPhoneDetails(param1)
     }
 
 }
