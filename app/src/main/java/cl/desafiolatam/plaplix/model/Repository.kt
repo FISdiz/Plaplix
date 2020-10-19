@@ -21,8 +21,7 @@ class Repository(context: Context) {
     var phoneSmallList = phoneDatabase.getPhoneDao().getSmallInfo()
 
     fun loadApiData() {
-        val call = RetrofitClient.retrofitInstance()
-            .allProducts()
+        val call = RetrofitClient.retrofitInstance().allProducts()
 
         call.enqueue(object : Callback<List<Phone>> {
             override fun onFailure(call: Call<List<Phone>>, t: Throwable) {
@@ -40,26 +39,57 @@ class Repository(context: Context) {
                 }
             }
         })
+
+        val callDetail = RetrofitClient.retrofitInstance().allDetailedProduct()
+
+        callDetail.enqueue(object : Callback<List<PhoneDetail>> {
+            override fun onFailure(call: Call<List<PhoneDetail>>, t: Throwable) {
+            }
+
+            override fun onResponse(call: Call<List<PhoneDetail>>, response: Response<List<PhoneDetail>>) {
+                saveDetailsDb(detailConverter(response.body()!!))
+            }
+        })
     }
 
-    fun phoneConverter (phoneList : List<Phone>) : List<PhoneEntity> {
-        return phoneList.map {phone ->
+    fun phoneConverter(phoneList: List<Phone>): List<PhoneEntity> {
+        return phoneList.map { phone ->
             PhoneEntity(
-                phone.id,
-                phone.image,
-                phone.name,
-                phone.price
+                    phone.id,
+                    phone.image,
+                    phone.name,
+                    phone.price
             )
         }
     }
 
-    fun saveDatabase (listPhoneEntity: List<PhoneEntity>) {
+    fun saveDatabase(listPhoneEntity: List<PhoneEntity>) {
         CoroutineScope(Dispatchers.IO).launch {
             phoneDatabase.getPhoneDao().insertPhone(listPhoneEntity)
         }
     }
 
-    fun getPhoneDetails(param1 : String) : LiveData<PhoneDetailEntity> {
-        return phoneDatabase.getPhoneDao().getAllInfo(param1)
+    fun detailConverter(detailList: List<PhoneDetail>): List<PhoneDetailEntity> {
+        return detailList.map { detail ->
+            PhoneDetailEntity(
+                    detail.id,
+                    detail.image,
+                    detail.name,
+                    detail.price,
+                    detail.credit,
+                    detail.description,
+                    detail.lastPrice
+            )
+        }
+    }
+    fun saveDetailsDb(listDetailEntity: List<PhoneDetailEntity>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            phoneDatabase.getPhoneDao().insertDetailPhone(listDetailEntity)
+        }
+    }
+
+    fun getPhoneDetails(param1: String): LiveData<PhoneDetailEntity> {
+        return phoneDatabase.getPhoneDao().getSingleDetail(param1)
     }
 }
+

@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cl.desafiolatam.plaplix.R
 import cl.desafiolatam.plaplix.viewmodel.PhoneViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_phone_detail.*
 
 private const val ARG_PARAM1 = "param1"
@@ -53,6 +54,10 @@ class PhoneDetailFragment : Fragment() {
             text_descdet.text = it.description
             text_lastdet.text = it.lastPrice.toString()
             text_pricedet.text = it.price.toString()
+            Picasso
+                    .get()
+                    .load(it.image)
+                    .into(img_phonedet)
         })
     }
 }
