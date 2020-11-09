@@ -61,8 +61,10 @@ class PhoneListFragment : Fragment() {
         })
 
         adapter.phoneSelected.observe(viewLifecycleOwner, Observer {
+
+            model.selectedID(it)
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, PhoneDetailFragment.newInstance("${it.id}", ""), "detail")
+                .replace(R.id.main_container, PhoneDetailFragment.newInstance("", ""), "detail")
                 .addToBackStack("detail")
                 .commit()
         })

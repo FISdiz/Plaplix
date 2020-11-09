@@ -39,28 +39,29 @@ class Repository(context: Context) {
                 }
             }
         })
-
-        val callDetail = RetrofitClient.retrofitInstance().allDetailedProduct()
-
-        callDetail.enqueue(object : Callback<List<PhoneDetail>> {
-            override fun onFailure(call: Call<List<PhoneDetail>>, t: Throwable) {
-            }
-
-            override fun onResponse(call: Call<List<PhoneDetail>>, response: Response<List<PhoneDetail>>) {
-                saveDetailsDb(detailConverter(response.body()!!))
-            }
-        })
     }
 
-    fun phoneConverter(phoneList: List<Phone>): List<PhoneEntity> {
-        return phoneList.map { phone ->
-            PhoneEntity(
-                    phone.id,
-                    phone.image,
-                    phone.name,
-                    phone.price
-            )
-        }
+    fun loadDetailData(id:Int) {
+
+        val call = RetrofitClient.retrofitInstance().detailedProduct(id)
+
+        call.enqueue(object : Callback<PhoneDetail>{
+            override fun onResponse(call: Call<PhoneDetail>, response: Response<PhoneDetail>) {
+                Log.d("REPO_DETAIL", "${response.code()}")
+                Log.d("REPO_DETAIL", "${response.body()}")
+                if (response.isSuccessful) {
+                    saveDetailsDb(detailConverter(response.body()!!))
+                } else {
+                    Log.d("REPO", "${call.request().url()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PhoneDetail>, t: Throwable) {
+                Log.d("CALL_DETAIL", "LOAD ERROR")
+                Log.d("CALL_DETAIL", t.message.toString())
+            }
+
+        })
     }
 
     fun saveDatabase(listPhoneEntity: List<PhoneEntity>) {
@@ -69,27 +70,15 @@ class Repository(context: Context) {
         }
     }
 
-    fun detailConverter(detailList: List<PhoneDetail>): List<PhoneDetailEntity> {
-        return detailList.map { detail ->
-            PhoneDetailEntity(
-                    detail.id,
-                    detail.image,
-                    detail.name,
-                    detail.price,
-                    detail.credit,
-                    detail.description,
-                    detail.lastPrice
-            )
-        }
-    }
-    fun saveDetailsDb(listDetailEntity: List<PhoneDetailEntity>) {
+
+    fun saveDetailsDb(detailEntity: PhoneDetailEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            phoneDatabase.getPhoneDao().insertDetailPhone(listDetailEntity)
+            phoneDatabase.getPhoneDao().insertDetailPhone(detailEntity)
         }
     }
 
-    fun getPhoneDetails(param1: String): LiveData<PhoneDetailEntity> {
-        return phoneDatabase.getPhoneDao().getSingleDetail(param1)
+    fun getPhoneDetails(id: Int): LiveData<PhoneDetail> {
+        return phoneDatabase.getPhoneDao().getSingleDetail(id)
     }
 }
 

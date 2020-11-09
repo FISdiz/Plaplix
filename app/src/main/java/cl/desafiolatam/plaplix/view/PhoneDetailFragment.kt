@@ -49,15 +49,17 @@ class PhoneDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val phoneViewModel : PhoneViewModel by activityViewModels()
-        phoneViewModel.getDetailFrom(param1!!).observe(viewLifecycleOwner, Observer {
-            text_namedet.text = it.name
-            text_descdet.text = it.description
-            text_lastdet.text = it.lastPrice.toString()
-            text_pricedet.text = it.price.toString()
-            Picasso
+        phoneViewModel.result.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                text_namedet.text = it.name
+                text_descdet.text = it.description
+                text_lastdet.text = it.lastPrice.toString()
+                text_pricedet.text = it.price.toString()
+                Picasso
                     .get()
                     .load(it.image)
                     .into(img_phonedet)
+            }
         })
     }
 }
