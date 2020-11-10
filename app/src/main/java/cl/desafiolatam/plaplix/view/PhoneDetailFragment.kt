@@ -1,5 +1,6 @@
 package cl.desafiolatam.plaplix.view
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cl.desafiolatam.plaplix.R
 import cl.desafiolatam.plaplix.viewmodel.PhoneViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_phone_detail.*
 
@@ -59,6 +61,25 @@ class PhoneDetailFragment : Fragment() {
                     .get()
                     .load(it.image)
                     .into(img_phonedet)
+            }
+
+            fun email() {
+
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("ensayoPrueba@gmail.com"))
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Consulta por ${it.name} , ID : ${it.id} ")
+                intent.putExtra(Intent.EXTRA_TEXT, " “Estimados\n" +
+                        "Buen día, vi el producto ${it.name} y me gustaría que me contactaran a este correo o al\n" +
+                        "siguiente número _________")
+                intent.type = "message/rfc822"
+                startActivity(Intent.createChooser(intent, "Choose an email client"))
+            }
+
+            fab.setOnClickListener { view ->
+                Snackbar.make(view, "Email", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .show()
+                email()
             }
         })
     }
